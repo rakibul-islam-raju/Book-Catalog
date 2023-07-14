@@ -3,7 +3,7 @@
 ## User
 
 - [x] registration API
-- [ ] login API
+- [x] login API
 
 ## Books
 
