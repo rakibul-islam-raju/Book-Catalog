@@ -3,37 +3,49 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { ILoginPostData, useLoginMutation } from "../../redux/apis/authApi";
+import {
+	ICreateUserPostData,
+	useSignupMutation,
+} from "../../redux/apis/authApi";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import ErrorDisplay from "../../components/ErrorDisplay";
 import { toast } from "react-toastify";
 
-const initialState: { email: string; password: string } = {
+const initialState: {
+	firstName: string;
+	lastName: string;
+	email: string;
+	password: string;
+} = {
+	firstName: "",
+	lastName: "",
 	email: "",
 	password: "",
 };
 
-export default function Login() {
+export default function Register() {
 	const navigate = useNavigate();
-	const [login, { isLoading, isError, error, isSuccess }] = useLoginMutation();
+	const [signup, { isLoading, isError, error, isSuccess }] =
+		useSignupMutation();
 
-	const [loginData, setLoginData] = useState<ILoginPostData>(initialState);
+	const [signupData, setSignupData] =
+		useState<ICreateUserPostData>(initialState);
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		await login(loginData);
+		await signup(signupData);
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setLoginData({ ...loginData, [e.target.name]: e.target.value });
+		setSignupData({ ...signupData, [e.target.name]: e.target.value });
 	};
 
 	useEffect(() => {
 		if (isSuccess) {
-			toast.success("Welcome to Bookies");
-			navigate("/");
+			toast.success("Account Created");
+			navigate("/login");
 		}
 	}, [isSuccess, navigate]);
 
@@ -52,9 +64,31 @@ export default function Login() {
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component="h1" variant="h5">
-					Sign in
+					Create New Account
 				</Typography>
 				<Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						id="firstName"
+						label="First Name"
+						name="firstName"
+						autoComplete="first name"
+						value={signupData.firstName}
+						onChange={handleChange}
+					/>
+					<TextField
+						margin="normal"
+						required
+						fullWidth
+						id="lastName"
+						label="Last Name"
+						name="lastName"
+						autoComplete="last name"
+						value={signupData.lastName}
+						onChange={handleChange}
+					/>
 					<TextField
 						margin="normal"
 						required
@@ -63,8 +97,7 @@ export default function Login() {
 						label="Email Address"
 						name="email"
 						autoComplete="email"
-						autoFocus
-						value={loginData.email}
+						value={signupData.email}
 						onChange={handleChange}
 					/>
 					<TextField
@@ -76,7 +109,7 @@ export default function Login() {
 						type="password"
 						id="password"
 						autoComplete="current-password"
-						value={loginData.password}
+						value={signupData.password}
 						onChange={handleChange}
 					/>
 					<Button
@@ -86,10 +119,10 @@ export default function Login() {
 						sx={{ mt: 3, mb: 2 }}
 						disabled={isLoading}
 					>
-						Sign In
+						Register
 					</Button>
 					<Box>
-						<Link to="/create-account">{"Don't have an account? Sign Up"}</Link>
+						<Link to="/login">{"Already have an account? Login"}</Link>
 					</Box>
 
 					{isError && error && <ErrorDisplay error={error} />}

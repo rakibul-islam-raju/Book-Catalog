@@ -6,7 +6,7 @@ function RootLayout() {
 	return (
 		<>
 			<Navbar />
-			<Container maxWidth="xl">
+			<Container maxWidth="xl" sx={{ mt: 2 }}>
 				<Outlet />
 			</Container>
 		</>

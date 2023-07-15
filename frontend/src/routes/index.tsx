@@ -3,6 +3,7 @@ import RootLayout from "../Layouts/RootLayout";
 import Login from "../pages/Login";
 import AuthLayout from "../Layouts/AuthLayout";
 import Home from "../pages/Home";
+import Register from "../pages/Register/intex";
 
 export const router = createBrowserRouter([
 	{
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
 			{
 				path: "login",
 				element: <Login />,
+			},
+			{
+				path: "create-account",
+				element: <Register />,
 			},
 		],
 	},

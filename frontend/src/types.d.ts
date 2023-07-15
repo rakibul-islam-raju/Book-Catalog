@@ -1,10 +1,22 @@
+interface IResponseMetaData {
+	page: number;
+	limit: number;
+	total: number;
+}
 interface IResponse<T> {
 	success: boolean;
 	statusCode: number;
 	message: string;
 	data: T;
+	meta?: IResponseMetaData;
 }
 
+interface IPaginationParams {
+	page?: number;
+	limit?: number;
+	sortBy?: string;
+	sortOrder?: string;
+}
 interface IUser {
 	id: string;
 	firstName: string;

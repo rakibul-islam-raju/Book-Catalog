@@ -24,7 +24,7 @@ const login = async (
   }
 
   //   generate token
-  const accessToken = jwtHelpers.createToken(
+  const access = jwtHelpers.createToken(
     user,
     config.jwt.JWT_SECRET as Secret,
     config.jwt.JWT_EXPIRES_IN as string
@@ -37,7 +37,7 @@ const login = async (
   );
 
   return {
-    accessToken,
+    access,
     refreshToken,
   };
 };
@@ -69,13 +69,13 @@ const login = async (
 //   }
 //   //   generate token
 //   const { firstName, lastName, email, id } = user;
-//   const newAccessToken = jwtHelpers.createToken(
+//   const newaccess = jwtHelpers.createToken(
 //     { firstName, lastName, email, id },
 //     config.jwt.JWT_SECRET as Secret,
 //     config.jwt.JWT_EXPIRES_IN as string
 //   );
 //   return {
-//     accessToken: newAccessToken,
+//     access: newaccess,
 //   };
 // };
 

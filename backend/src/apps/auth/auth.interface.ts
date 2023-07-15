@@ -4,10 +4,10 @@ export type ILoginData = {
 };
 
 export type ILoginUserResponse = {
-  accessToken: string;
+  access: string;
   refreshToken: string;
 };
 
 export type IRefreshTokenResponse = {
-  accessToken: string;
+  access: string;
 };

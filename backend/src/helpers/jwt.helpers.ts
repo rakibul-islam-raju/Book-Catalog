@@ -15,7 +15,7 @@ const createToken = (
     lastName: payload.lastName,
   };
 
-  return jwt.sign(data, secret, {
+  return jwt.sign({ user: data }, secret, {
     expiresIn: expireTime,
   });
 };
