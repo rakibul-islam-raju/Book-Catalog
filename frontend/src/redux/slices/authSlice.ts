@@ -30,14 +30,10 @@ const authSlice = createSlice({
 	reducers: {
 		userLoggedIn(state, action: PayloadAction<{ access: string }>) {
 			state.access = action.payload.access;
-
-			if (state.access) {
-				const auth = {
-					access: state.access,
-				};
-
-				localStorage.setItem("bookiesAuth", JSON.stringify(auth));
-			}
+			localStorage.setItem(
+				"bookiesAuth",
+				JSON.stringify(action.payload.access)
+			);
 		},
 		userLoggedOut(state) {
 			state.access = null;
