@@ -7,7 +7,7 @@ export type IBook = Document & {
   title: string;
   author: Schema.Types.ObjectId;
   genre: GenreType;
-  publishDate: Date;
+  publishYear: string;
 };
 
 export type IBookMethods = object;

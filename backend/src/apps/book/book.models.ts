@@ -19,8 +19,8 @@ const bookSchema = new Schema<IBook, BookModel>(
       required: true,
       enum: GENRES,
     },
-    publishDate: {
-      type: Date,
+    publishYear: {
+      type: String,
       required: true,
     },
   },

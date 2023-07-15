@@ -11,8 +11,6 @@ const createNewBook = async (
   bookData: IBook,
   authorId: string
 ): Promise<IBook | null> => {
-  console.log('authorID =>', authorId);
-
   const newBook = new Book({ ...bookData, author: authorId });
   await newBook.save();
   return newBook.populate('author');
@@ -64,7 +62,8 @@ const getAllBooks = async (
       $or: searchableFields.map((field: string) => {
         return {
           [field]: {
-            $regex: new RegExp(searchTerm, 'i'),
+            $regex: searchTerm,
+            $options: 'i',
           },
         };
       }),
@@ -76,13 +75,7 @@ const getAllBooks = async (
   if (Object.keys(filterData).length > 0) {
     andConditions.push({
       $and: Object.entries(filterData).map(([field, value]) => {
-        if (field === 'maxPrice' && value) {
-          return { price: { $lte: parseFloat(value) } };
-        } else if (field === 'minPrice' && value) {
-          return { price: { $gte: parseFloat(value) } };
-        } else {
-          return { [field]: value };
-        }
+        return { [field]: value };
       }),
     });
 

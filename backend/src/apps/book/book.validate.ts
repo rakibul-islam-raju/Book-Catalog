@@ -8,8 +8,8 @@ const createBookZodValidateSchema = z.object({
     genre: z.string({
       required_error: 'Genre is required',
     }),
-    publishDate: z.string({
-      required_error: 'Publish date is required',
+    publishYear: z.string({
+      required_error: 'Publish year is required',
     }),
   }),
 });
@@ -18,7 +18,7 @@ const updateBookZodValidateSchema = z.object({
   body: z.object({
     title: z.string().optional(),
     genre: z.string().optional(),
-    publishDate: z.string().optional(),
+    publishYear: z.string().optional(),
   }),
 });
 

@@ -12,11 +12,6 @@ export const GENRES = [
   'self-help',
 ];
 
-export const bookSearchableFields = [
-  'title',
-  'author.firstName',
-  'author.lastName',
-  'genre',
-];
+export const bookSearchableFields = ['title', 'genre'];
 
 export const bookFilterOptions = ['searchTerm', 'genre', 'pushlishYear'];

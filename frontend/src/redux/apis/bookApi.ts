@@ -1,9 +1,11 @@
 import { baseApi } from "./baseApi";
 
-export interface IBookParams extends IPaginationParams {
+export interface IBookParams {
+	page?: number;
+	limit?: number;
+	sortBy?: string;
+	sortOrder?: string;
 	title?: string;
-	"author.firstName"?: string;
-	"author.lastName"?: string;
 	genre?: string;
 	searchTerm?: string;
 	pushlishYear?: string;
