@@ -1,3 +1,9 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable no-mixed-spaces-and-tabs */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { baseApi } from "./baseApi";
 
 export interface IBookParams {
@@ -17,7 +23,7 @@ export interface IBookPostData {
 	publishYear: string;
 }
 export interface IBookUpdateData {
-	id: number;
+	id: string;
 	data: Partial<IBookPostData>;
 }
 
@@ -34,6 +40,7 @@ export const bookApi = baseApi.injectEndpoints({
 			query: (id) => ({
 				url: `/books/${id}`,
 			}),
+			providesTags: (result, error, arg) => [{ type: "Books", id: arg }],
 		}),
 		addBook: builder.mutation<string, IBookPostData>({
 			query: (data: IBookPostData) => ({
@@ -49,10 +56,10 @@ export const bookApi = baseApi.injectEndpoints({
 				method: "PATCH",
 				body: data,
 			}),
-			invalidatesTags: ["Books"],
+			invalidatesTags: (result, error, arg) => [{ type: "Books", id: arg.id }],
 		}),
-		deleteBook: builder.mutation({
-			query: (id: string) => ({
+		deleteBook: builder.mutation<string, string>({
+			query: (id) => ({
 				url: `books/${id}`,
 				method: "DELETE",
 			}),

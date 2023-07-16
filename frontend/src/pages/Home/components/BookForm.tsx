@@ -4,7 +4,11 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { FormEvent, useEffect, useState } from "react";
-import { IBookPostData, useAddBookMutation } from "../../../redux/apis/bookApi";
+import {
+	IBookPostData,
+	useAddBookMutation,
+	useUpdateBookMutation,
+} from "../../../redux/apis/bookApi";
 import {
 	Box,
 	Button,
@@ -32,17 +36,26 @@ const initialState: {
 type IProps = {
 	title: string;
 	open: boolean;
+	book?: IBook;
 	handleClose: () => void;
 };
 
-export default function BookForm({ title, open, handleClose }: IProps) {
-	const [addBook, { isLoading, isSuccess, isError, error }] =
-		useAddBookMutation();
-	const [bookData, setBookData] = useState<IBookPostData>(initialState);
+export default function BookForm({ title, open, book, handleClose }: IProps) {
+	const [addBook, { isLoading, isSuccess, error }] = useAddBookMutation();
+	const [
+		updateBook,
+		{ isLoading: editLoading, isSuccess: editSuccess, error: editError },
+	] = useUpdateBookMutation();
+	const [bookData, setBookData] = useState<IBookPostData>(book ?? initialState);
 
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		addBook(bookData);
+
+		if (book) {
+			updateBook({ id: book.id, data: bookData });
+		} else {
+			addBook(bookData);
+		}
 	};
 
 	const handleChangeDate = (newValue: string) => {
@@ -55,7 +68,11 @@ export default function BookForm({ title, open, handleClose }: IProps) {
 			toast.success("Book added successfully.");
 			handleClose();
 		}
-	}, [isSuccess, handleClose]);
+		if (editSuccess) {
+			toast.success("Book updated successfully.");
+			handleClose();
+		}
+	}, [isSuccess, editSuccess, handleClose]);
 
 	return (
 		<div>
@@ -113,11 +130,17 @@ export default function BookForm({ title, open, handleClose }: IProps) {
 								onChange={(newValue) => handleChangeDate(String(newValue))}
 							/>
 						</FormControl>
-						<Button type="submit" variant="contained" disabled={isLoading}>
+						<Button
+							type="submit"
+							variant="contained"
+							disabled={isLoading || editLoading}
+						>
 							Submit
 						</Button>
 
-						{isError && error && <ErrorDisplay error={error} />}
+						{(error || editError) && (
+							<ErrorDisplay error={error || editError} />
+						)}
 					</Box>
 				</DialogContent>
 			</Dialog>

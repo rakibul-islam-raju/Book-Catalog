@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -20,7 +21,7 @@ import Loader from "../../components/Loader";
 import ErrorDisplay from "../../components/ErrorDisplay";
 import { useEffect, useState } from "react";
 import BookForm from "../Home/components/BookForm";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	useAddReviewMutation,
 	useGetReviewsQuery,
@@ -28,22 +29,34 @@ import {
 import { toast } from "react-toastify";
 import useAuth from "../../hooks/useAuth";
 import { useAppSelector } from "../../redux/hooks";
+import {
+	useDeleteBookMutation,
+	useGetBookQuery,
+} from "../../redux/apis/bookApi";
 
 export default function Book() {
+	const navigate = useNavigate();
+	const { id: bookId } = useParams();
 	const authenticated = useAuth();
 	const { user } = useAppSelector((state) => state.auth);
-	const { state } = useLocation();
-	const book: IBook = state.book as IBook;
 
 	const [open, setOpen] = useState<boolean>(false);
 	const [comment, setComment] = useState<string>("");
+
+	const {
+		data: book,
+		isLoading: bookLoading,
+		error: bookError,
+	} = useGetBookQuery(String(bookId));
 
 	const {
 		data: reviews,
 		isLoading,
 		isError,
 		error,
-	} = useGetReviewsQuery({ bookId: book.id }, { skip: !book.id });
+	} = useGetReviewsQuery({ bookId: String(bookId) }, { skip: !bookId });
+	const [deleteBook, { error: deleteError, isSuccess: deleteSuccess }] =
+		useDeleteBookMutation();
 
 	const [
 		addReview,
@@ -59,10 +72,17 @@ export default function Book() {
 	};
 
 	const handleSubmit = () => {
-		if (!book.id || comment.length === 0) {
+		if (!bookId || comment.length === 0) {
 			return false;
 		}
-		addReview({ comment, book: book.id });
+		addReview({ comment, book: bookId });
+	};
+
+	const handleDelete = () => {
+		const confirm = window.confirm("Are you sure to delete this book?");
+		if (confirm && bookId) {
+			deleteBook(bookId);
+		}
 	};
 
 	useEffect(() => {
@@ -71,6 +91,13 @@ export default function Book() {
 			setComment("");
 		}
 	}, [isSuccess]);
+
+	useEffect(() => {
+		if (deleteSuccess) {
+			toast.success("Book deleted successfully!");
+			navigate(-1);
+		}
+	}, [deleteSuccess, navigate]);
 
 	return (
 		<Box>
@@ -81,32 +108,47 @@ export default function Book() {
 				mb={2}
 			>
 				<Box>
-					{isError && error && <ErrorDisplay error={error} />}
+					{((isError && error) || deleteError || bookError) && (
+						<ErrorDisplay error={error || deleteError || bookError} />
+					)}
 
-					<Typography variant="h4" gutterBottom>
-						{book.title}
-					</Typography>
-					<Typography>
-						Author:
-						<span
-							style={{ marginLeft: "3px" }}
-						>{`${book.author.firstName} ${book.author.lastName}`}</span>
-					</Typography>
-					<Typography>
-						Genre: <span style={{ marginLeft: "3px" }}>{`${book.genre}`}</span>
-					</Typography>
-					<Typography>
-						Publish year:{" "}
-						<span style={{ marginLeft: "3px" }}>{`${book.publishYear}`}</span>
-					</Typography>
+					{bookLoading ? (
+						<Loader />
+					) : (
+						book?.data && (
+							<>
+								<Typography variant="h4" gutterBottom>
+									{book?.data.title}
+								</Typography>
+								<Typography>
+									Author:
+									<span
+										style={{ marginLeft: "3px" }}
+									>{`${book?.data.author.firstName} ${book?.data.author.lastName}`}</span>
+								</Typography>
+								<Typography>
+									Genre:{" "}
+									<span
+										style={{ marginLeft: "3px" }}
+									>{`${book?.data.genre}`}</span>
+								</Typography>
+								<Typography>
+									Publish year:{" "}
+									<span
+										style={{ marginLeft: "3px" }}
+									>{`${book?.data.publishYear}`}</span>
+								</Typography>
+							</>
+						)
+					)}
 				</Box>
 
-				{authenticated && user?.email === book.author.email && (
+				{authenticated && user?.email === book?.data.author.email && (
 					<ButtonGroup>
 						<Button variant="outlined" color="info" onClick={handleClickOpen}>
 							Edit
 						</Button>
-						<Button variant="outlined" color="error" onClick={handleClickOpen}>
+						<Button variant="outlined" color="error" onClick={handleDelete}>
 							Delete
 						</Button>
 					</ButtonGroup>
@@ -185,8 +227,13 @@ export default function Book() {
 				</Box>
 			</Box>
 
-			{open && (
-				<BookForm open={open} handleClose={handleClose} title={"Edit Book"} />
+			{open && book && (
+				<BookForm
+					open={open}
+					handleClose={handleClose}
+					title={"Edit Book"}
+					book={book?.data}
+				/>
 			)}
 		</Box>
 	);
