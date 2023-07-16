@@ -31,6 +31,16 @@ interface IBook {
 	title: string;
 	author: IUser;
 	genre: string;
+	publishYear: string;
+	createdAt: Date;
+	updatedAt: Date;
+}
+
+interface IReview {
+	id: string;
+	comment: string;
+	reviewer: IUser;
+	book: IBook;
 	createdAt: Date;
 	updatedAt: Date;
 }

@@ -28,13 +28,14 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import BookForm from "./components/BookForm";
 import { GENRES } from "../../utils/constants";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const { params } = useAppSelector((state) => state.book);
 
 	const [open, setOpen] = useState<boolean>(false);
-	const [editBook, setEditBook] = useState<IBook | null>(null);
 	const [searchText, setsearchText] = useState<string>(params.searchTerm ?? "");
 	const debouncedSearchTerm = useDebounce(searchText, 500);
 
@@ -123,7 +124,12 @@ export default function Home() {
 					<Grid container spacing={2}>
 						{data.data.map((book: IBook) => (
 							<Grid item key={book.id} xs={12} md={3}>
-								<Paper sx={{ p: 2 }}>
+								<Paper
+									sx={{ p: 2, cursor: "pointer" }}
+									onClick={() =>
+										navigate(`book/${book.id}`, { state: { book } })
+									}
+								>
 									<Typography variant="h6">{book.title}</Typography>
 									<Box
 										display={"flex"}
@@ -154,13 +160,6 @@ export default function Home() {
 
 			{open && (
 				<BookForm open={open} handleClose={handleClose} title={"New Book"} />
-			)}
-			{editBook && (
-				<BookForm
-					open={!!editBook}
-					handleClose={handleClose}
-					title={"Edit Book"}
-				/>
 			)}
 		</Box>
 	);

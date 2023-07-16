@@ -44,6 +44,7 @@ const getAllReview = async (
 
   const review = await Review.find({ book: bookId })
     .populate('reviewer')
+    .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
 

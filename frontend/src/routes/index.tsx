@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import AuthLayout from "../Layouts/AuthLayout";
 import Home from "../pages/Home";
 import Register from "../pages/Register/intex";
+import Book from "../pages/Book";
 
 export const router = createBrowserRouter([
 	{
@@ -13,6 +14,10 @@ export const router = createBrowserRouter([
 			{
 				index: true,
 				element: <Home />,
+			},
+			{
+				path: "book/:id",
+				element: <Book />,
 			},
 		],
 	},

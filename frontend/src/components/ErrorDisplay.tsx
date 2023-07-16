@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Alert, AlertTitle } from "@mui/material";
 import React from "react";
 
@@ -9,7 +10,9 @@ const ErrorDisplay: React.FC<IErrorDisplayProps> = ({ error }) => {
 	return (
 		<Alert severity="error">
 			<AlertTitle>An error has occurred</AlertTitle>
-			<div>{JSON.stringify(error)}</div>
+			<div>
+				{error?.data?.message ? error?.data?.message : JSON.stringify(error)}
+			</div>
 		</Alert>
 	);
 };

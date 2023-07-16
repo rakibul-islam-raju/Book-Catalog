@@ -11,8 +11,6 @@ const createNewBook = async (
   bookData: IBook,
   userId: string
 ): Promise<IBook | null> => {
-  console.log('authorId =>', userId);
-
   const newBook = new Book({ ...bookData, author: userId });
   await newBook.save();
   return newBook.populate('author');
