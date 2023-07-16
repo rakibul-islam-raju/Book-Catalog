@@ -12,7 +12,7 @@ type Params = {
 		title?: string;
 		genre?: string;
 		searchTerm?: string;
-		pushlishYear?: string;
+		publishYear?: string;
 	};
 };
 
@@ -47,8 +47,8 @@ const bookSlice = createSlice({
 				state.params.searchTerm = action.payload;
 			}
 		},
-		setPushlishYear(state, action: PayloadAction<string>) {
-			state.params.pushlishYear = action.payload;
+		setPublishYear(state, action: PayloadAction<string>) {
+			state.params.publishYear = action.payload;
 		},
 		clearAllFilters(state) {
 			state.params = { limit: RESULTS_PER_PAGE, page: 1 };
@@ -61,7 +61,7 @@ export const {
 	setPage,
 	setGenre,
 	setSearchTerm,
-	setPushlishYear,
+	setPublishYear,
 	clearAllFilters,
 } = bookSlice.actions;
 export default bookSlice.reducer;

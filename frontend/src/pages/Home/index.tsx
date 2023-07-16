@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
 	clearAllFilters,
 	setGenre,
-	setPushlishYear,
+	setPublishYear,
 	setSearchTerm,
 } from "../../redux/slices/bookSlice";
 import { useEffect, useState } from "react";
@@ -59,7 +59,7 @@ export default function Home() {
 
 	const handleChangeDate = (newValue: string) => {
 		const year = new Date(newValue).getFullYear();
-		dispatch(setPushlishYear(String(year)));
+		dispatch(setPublishYear(String(year)));
 	};
 
 	useEffect(() => {
@@ -81,7 +81,7 @@ export default function Home() {
 					New Book
 				</Button>
 			</Box>
-			{(params.genre || params.searchTerm || params.pushlishYear) && (
+			{(params.genre || params.searchTerm || params.publishYear) && (
 				<Box display={"flex"} justifyContent={"flex-end"}>
 					<Button
 						color={"error"}

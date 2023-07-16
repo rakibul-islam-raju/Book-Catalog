@@ -14,4 +14,4 @@ export const GENRES = [
 
 export const bookSearchableFields = ['title', 'genre'];
 
-export const bookFilterOptions = ['searchTerm', 'genre', 'pushlishYear'];
+export const bookFilterOptions = ['searchTerm', 'genre', 'publishYear'];

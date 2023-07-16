@@ -4,6 +4,7 @@ interface IResponseMetaData {
 	total: number;
 }
 interface IResponse<T> {
+	[x: string]: any;
 	success: boolean;
 	statusCode: number;
 	message: string;
