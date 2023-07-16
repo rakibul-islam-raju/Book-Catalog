@@ -40,7 +40,7 @@ export const bookApi = baseApi.injectEndpoints({
 			query: (id) => ({
 				url: `/books/${id}`,
 			}),
-			providesTags: (result, error, arg) => [{ type: "Books", id: arg }],
+			providesTags: (_result, _error, arg) => [{ type: "Books", id: arg }],
 		}),
 		addBook: builder.mutation<string, IBookPostData>({
 			query: (data: IBookPostData) => ({
@@ -56,7 +56,9 @@ export const bookApi = baseApi.injectEndpoints({
 				method: "PATCH",
 				body: data,
 			}),
-			invalidatesTags: (result, error, arg) => [{ type: "Books", id: arg.id }],
+			invalidatesTags: (_result, _error, arg) => [
+				{ type: "Books", id: arg.id },
+			],
 		}),
 		deleteBook: builder.mutation<string, string>({
 			query: (id) => ({
