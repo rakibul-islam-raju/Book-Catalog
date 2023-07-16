@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
+	Alert,
+	AlertTitle,
 	Avatar,
 	Box,
 	Button,
@@ -24,8 +26,12 @@ import {
 	useGetReviewsQuery,
 } from "../../redux/apis/reviewAPi";
 import { toast } from "react-toastify";
+import useAuth from "../../hooks/useAuth";
+import { useAppSelector } from "../../redux/hooks";
 
 export default function Book() {
+	const authenticated = useAuth();
+	const { user } = useAppSelector((state) => state.auth);
 	const { state } = useLocation();
 	const book: IBook = state.book as IBook;
 
@@ -94,14 +100,17 @@ export default function Book() {
 						<span style={{ marginLeft: "3px" }}>{`${book.publishYear}`}</span>
 					</Typography>
 				</Box>
-				<ButtonGroup>
-					<Button variant="outlined" color="info" onClick={handleClickOpen}>
-						Edit
-					</Button>
-					<Button variant="outlined" color="error" onClick={handleClickOpen}>
-						Delete
-					</Button>
-				</ButtonGroup>
+
+				{authenticated && user?.email === book.author.email && (
+					<ButtonGroup>
+						<Button variant="outlined" color="info" onClick={handleClickOpen}>
+							Edit
+						</Button>
+						<Button variant="outlined" color="error" onClick={handleClickOpen}>
+							Delete
+						</Button>
+					</ButtonGroup>
+				)}
 			</Box>
 
 			<Box mt={4} width={{ xs: 12 / 12, md: 6 / 12 }}>
@@ -110,24 +119,32 @@ export default function Book() {
 					Reviews
 				</Typography>
 
-				<TextField
-					multiline
-					name="comment"
-					value={comment}
-					onChange={(e) => setComment(e.target.value)}
-					rows={3}
-					fullWidth
-					required
-				/>
-				<Box display={"flex"} justifyContent={"flex-end"} mt={1}>
-					<Button
-						variant="contained"
-						disabled={createLoading}
-						onClick={handleSubmit}
-					>
-						Submit
-					</Button>
-				</Box>
+				{!authenticated ? (
+					<Alert severity="warning">
+						<AlertTitle>Please login to review.</AlertTitle>
+					</Alert>
+				) : (
+					<>
+						<TextField
+							multiline
+							name="comment"
+							value={comment}
+							onChange={(e) => setComment(e.target.value)}
+							rows={3}
+							fullWidth
+							required
+						/>
+						<Box display={"flex"} justifyContent={"flex-end"} mt={1}>
+							<Button
+								variant="contained"
+								disabled={createLoading}
+								onClick={handleSubmit}
+							>
+								Submit
+							</Button>
+						</Box>
+					</>
+				)}
 
 				{CreateError && <ErrorDisplay error={CreateError} />}
 

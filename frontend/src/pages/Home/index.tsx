@@ -20,6 +20,7 @@ import ErrorDisplay from "../../components/ErrorDisplay";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import {
+	clearAllFilters,
 	setGenre,
 	setPushlishYear,
 	setSearchTerm,
@@ -29,10 +30,12 @@ import { useDebounce } from "../../hooks/useDebounce";
 import BookForm from "./components/BookForm";
 import { GENRES } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 export default function Home() {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const authenticated = useAuth();
 	const { params } = useAppSelector((state) => state.book);
 
 	const [open, setOpen] = useState<boolean>(false);
@@ -44,6 +47,9 @@ export default function Home() {
 	});
 
 	const handleClickOpen = () => {
+		if (!authenticated) {
+			navigate("/login");
+		}
 		setOpen(true);
 	};
 
@@ -75,6 +81,19 @@ export default function Home() {
 					New Book
 				</Button>
 			</Box>
+			{(params.genre || params.searchTerm || params.pushlishYear) && (
+				<Box display={"flex"} justifyContent={"flex-end"}>
+					<Button
+						color={"error"}
+						onClick={() => {
+							setsearchText("");
+							dispatch(clearAllFilters());
+						}}
+					>
+						Clear All Filters
+					</Button>
+				</Box>
+			)}
 			<Grid container spacing={2} mb={4}>
 				<Grid item xs={12} md={6}>
 					<TextField

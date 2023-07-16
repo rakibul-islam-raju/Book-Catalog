@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RESULTS_PER_PAGE } from "../../utils";
 
 type Params = {
 	params: {
@@ -17,7 +18,7 @@ type Params = {
 
 const initialState: Params = {
 	params: {
-		limit: 12,
+		limit: RESULTS_PER_PAGE,
 		page: 1,
 	},
 };
@@ -49,9 +50,18 @@ const bookSlice = createSlice({
 		setPushlishYear(state, action: PayloadAction<string>) {
 			state.params.pushlishYear = action.payload;
 		},
+		clearAllFilters(state) {
+			state.params = { limit: RESULTS_PER_PAGE, page: 1 };
+		},
 	},
 });
 
-export const { setLimit, setPage, setGenre, setSearchTerm, setPushlishYear } =
-	bookSlice.actions;
+export const {
+	setLimit,
+	setPage,
+	setGenre,
+	setSearchTerm,
+	setPushlishYear,
+	clearAllFilters,
+} = bookSlice.actions;
 export default bookSlice.reducer;
