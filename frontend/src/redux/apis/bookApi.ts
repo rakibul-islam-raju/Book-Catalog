@@ -8,13 +8,13 @@ export interface IBookParams {
 	title?: string;
 	genre?: string;
 	searchTerm?: string;
-	pushlishYear?: string;
+	publishYear?: string;
 }
 
 export interface IBookPostData {
 	title: string;
 	genre: string;
-	publishDate: Date;
+	publishYear: string;
 }
 export interface IBookUpdateData {
 	id: number;
@@ -29,6 +29,11 @@ export const bookApi = baseApi.injectEndpoints({
 				params,
 			}),
 			providesTags: ["Books"],
+		}),
+		getBook: builder.query<IResponse<IBook>, string>({
+			query: (id) => ({
+				url: `/books/${id}`,
+			}),
 		}),
 		addBook: builder.mutation<string, IBookPostData>({
 			query: (data: IBookPostData) => ({
@@ -58,6 +63,7 @@ export const bookApi = baseApi.injectEndpoints({
 
 export const {
 	useGetBooksQuery,
+	useGetBookQuery,
 	useAddBookMutation,
 	useUpdateBookMutation,
 	useDeleteBookMutation,

@@ -2,14 +2,15 @@ import {
 	Alert,
 	AlertTitle,
 	Box,
+	Button,
 	Chip,
+	Divider,
 	FormControl,
 	Grid,
 	InputLabel,
 	MenuItem,
 	Paper,
 	Select,
-	Stack,
 	TextField,
 	Typography,
 } from "@mui/material";
@@ -25,31 +26,29 @@ import {
 } from "../../redux/slices/bookSlice";
 import { useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
-
-const GENRES = [
-	"fiction",
-	"novel",
-	"narrative",
-	"science-fiction",
-	"non-fiction",
-	"thriller",
-	"mystry",
-	"autobiography",
-	"biography",
-	"history",
-	"self-help",
-];
+import BookForm from "./components/BookForm";
+import { GENRES } from "../../utils/constants";
 
 export default function Home() {
 	const dispatch = useAppDispatch();
 	const { params } = useAppSelector((state) => state.book);
 
+	const [open, setOpen] = useState<boolean>(false);
+	const [editBook, setEditBook] = useState<IBook | null>(null);
 	const [searchText, setsearchText] = useState<string>(params.searchTerm ?? "");
 	const debouncedSearchTerm = useDebounce(searchText, 500);
 
 	const { data, isLoading, isError, error } = useGetBooksQuery({
 		...params,
 	});
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	const handleChangeDate = (newValue: string) => {
 		const year = new Date(newValue).getFullYear();
@@ -62,47 +61,59 @@ export default function Home() {
 
 	return (
 		<Box>
-			<Box>
+			<Box
+				display={"flex"}
+				justifyContent={"space-between"}
+				alignItems={"center"}
+				mb={2}
+			>
 				<Typography variant="h4" gutterBottom>
 					All Books
 				</Typography>
+				<Button variant="outlined" onClick={handleClickOpen}>
+					New Book
+				</Button>
 			</Box>
-			<Stack
-				direction={"row"}
-				gap={1}
-				alignItems={"center"}
-				justifyContent={"flex-end"}
-			>
-				<FormControl>
-					<InputLabel id="demo-simple-select-label">Genre</InputLabel>
-					<Select
-						label="Genre"
-						value={params.genre}
-						onChange={(e) => dispatch(setGenre(String(e.target.value)))}
-						sx={{ minWidth: "200px" }}
-					>
-						<MenuItem value={"all"}>All</MenuItem>
-						{GENRES.map((genre: string) => (
-							<MenuItem key={genre} value={genre}>
-								{genre}
-							</MenuItem>
-						))}
-					</Select>
-				</FormControl>
-				<DatePicker
-					label="Publication Year"
-					views={["year"]}
-					onChange={(newValue) => handleChangeDate(String(newValue))}
-				/>
-			</Stack>
-			<Box mt={2}>
-				<TextField
-					fullWidth
-					label="Search by book name or genre"
-					value={searchText}
-					onChange={(e) => setsearchText(e.target.value)}
-				/>
-			</Box>
+			<Grid container spacing={2} mb={4}>
+				<Grid item xs={12} md={6}>
+					<TextField
+						fullWidth
+						label="Search by book name or genre"
+						value={searchText}
+						onChange={(e) => setsearchText(e.target.value)}
+					/>
+				</Grid>
+				<Grid item xs={12} md={6}>
+					<Box display={"flex"} gap={1}>
+						<FormControl fullWidth>
+							<InputLabel id="demo-simple-select-label">Genre</InputLabel>
+							<Select
+								label="Genre"
+								value={params.genre}
+								onChange={(e) => dispatch(setGenre(String(e.target.value)))}
+								sx={{ minWidth: "200px" }}
+							>
+								<MenuItem value={"all"}>All</MenuItem>
+								{GENRES.map((genre: string) => (
+									<MenuItem key={genre} value={genre}>
+										{genre}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+						<FormControl fullWidth>
+							<DatePicker
+								label="Publication Year"
+								views={["year"]}
+								onChange={(newValue) => handleChangeDate(String(newValue))}
+							/>
+						</FormControl>
+					</Box>
+				</Grid>
+			</Grid>
+
+			<Divider />
+
 			<Box mt={4}>
 				{isLoading ? (
 					<Loader />
@@ -140,6 +151,17 @@ export default function Home() {
 					</Alert>
 				)}
 			</Box>
+
+			{open && (
+				<BookForm open={open} handleClose={handleClose} title={"New Book"} />
+			)}
+			{editBook && (
+				<BookForm
+					open={!!editBook}
+					handleClose={handleClose}
+					title={"Edit Book"}
+				/>
+			)}
 		</Box>
 	);
 }
