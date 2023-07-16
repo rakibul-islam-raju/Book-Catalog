@@ -9,9 +9,11 @@ import { bookSearchableFields } from './book.constants';
 
 const createNewBook = async (
   bookData: IBook,
-  authorId: string
+  userId: string
 ): Promise<IBook | null> => {
-  const newBook = new Book({ ...bookData, author: authorId });
+  console.log('authorId =>', userId);
+
+  const newBook = new Book({ ...bookData, author: userId });
   await newBook.save();
   return newBook.populate('author');
 };

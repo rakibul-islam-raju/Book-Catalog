@@ -11,8 +11,11 @@ const createBook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const bookData = req.body;
     const requestedUser = req.user;
-    console.log('requestedUser =>', requestedUser);
     const userId = requestedUser?.id;
+
+    console.log('===========>', requestedUser?.id);
+    console.log('emial', requestedUser?.email);
+
     const newBook = await bookService.createNewBook(bookData, userId);
 
     sendResponse(res, {
